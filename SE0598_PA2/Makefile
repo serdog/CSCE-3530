@@ -1,13 +1,30 @@
-CC=gcc
-CFLAGS=-Wall -Wextra -std=c11
+# Compiler
+CC = gcc
+CFLAGS = -Wall -Wextra -g
 
-all: server client
+# Source files
+CLIENT_SRC = TCP_Client.c
+SERVER_SRC = TCP_Server.c
 
-server: TCP_Server.c
-	$(CC) $(CFLAGS) -o server TCP_Server.c
+# Executable names
+CLIENT_EXE = client
+SERVER_EXE = server
 
-client: TCP_Client.c
-	$(CC) $(CFLAGS) -o client TCP_Client.c
+# Default target: Compile both client and server **only if needed**
+all: $(CLIENT_EXE) $(SERVER_EXE)
+	@echo "Local IP Address: " `hostname -I`
 
+# Compile the client only if needed
+$(CLIENT_EXE): $(CLIENT_SRC)
+	$(CC) $(CFLAGS) -o $(CLIENT_EXE) $(CLIENT_SRC)
+
+# Compile the server only if needed
+$(SERVER_EXE): $(SERVER_SRC)
+	$(CC) $(CFLAGS) -o $(SERVER_EXE) $(SERVER_SRC)
+
+# Clean up executables and user-generated files
 clean:
-	rm -f server client
+	rm -f $(CLIENT_EXE) $(SERVER_EXE) *.txt encrypted_*
+
+# .PHONY ensures `clean` always runs
+.PHONY: all clean client server
